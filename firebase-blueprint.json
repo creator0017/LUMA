@@ -1,0 +1,124 @@
+{
+  "entities": {
+    "user": {
+      "title": "User Profile",
+      "description": "User account profile and authentication metadata",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth User UID"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "User email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User full display name"
+        },
+        "authProvider": {
+          "type": "string",
+          "description": "Authentication provider (e.g. google, password)"
+        },
+        "emailVerified": {
+          "type": "boolean",
+          "description": "Whether the email is verified"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Profile picture URL"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["uid", "email"]
+    },
+    "emailVerification": {
+      "title": "Email Verification",
+      "description": "Real-time OTP and email verification records",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Target email address"
+        },
+        "code": {
+          "type": "string",
+          "description": "6-digit OTP verification code",
+          "minLength": 6,
+          "maxLength": 6
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "verified", "expired"],
+          "description": "Current status of the verification"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when code was issued"
+        },
+        "expiresAt": {
+          "type": "string",
+          "description": "Expiration timestamp"
+        }
+      },
+      "required": ["email", "code", "status"]
+    },
+    "journalEntry": {
+      "title": "Journal Entry",
+      "description": "Private user journal entry and emotional reflection",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner user UID"
+        },
+        "text": {
+          "type": "string",
+          "description": "Journal entry body text",
+          "maxLength": 10000
+        },
+        "mood": {
+          "type": "string",
+          "description": "Selected mood state"
+        },
+        "date": {
+          "type": "string",
+          "description": "Human-formatted date string"
+        },
+        "aiInsight": {
+          "type": "string",
+          "description": "AI reflection insight"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": ["userId", "text"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "user",
+      "description": "User profile collection containing account information"
+    },
+    "/users/{userId}/verifications/{verificationId}": {
+      "schema": "emailVerification",
+      "description": "User real-time OTP and email verification records"
+    },
+    "/users/{userId}/entries/{entryId}": {
+      "schema": "journalEntry",
+      "description": "Private journal entries belonging to the user"
+    }
+  }
+}

@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Health check test connection path
+    match /test/connection {
+      allow read: if true;
+    }
+
+    // User profiles and private data with strict user isolation
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      // Verifications subcollection for real-time OTP tracking
+      match /verifications/{verificationId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Profile subcollection / documents
+      match /profile/{profileId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // User private journal entries
+      match /entries/{entryId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Any nested subcollections belonging to user
+      match /{allPaths=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Top-level collections queried by userId
+    match /journals/{journalId} {
+      allow read, write: if isAuthenticated() && (
+        resource == null || resource.data.userId == request.auth.uid
+      ) && (
+        request.resource == null || request.resource.data.userId == request.auth.uid
+      );
+    }
+
+    match /tasks/{taskId} {
+      allow read, write: if isAuthenticated() && (
+        resource == null || resource.data.userId == request.auth.uid
+      ) && (
+        request.resource == null || request.resource.data.userId == request.auth.uid
+      );
+    }
+
+    match /goals/{goalId} {
+      allow read, write: if isAuthenticated() && (
+        resource == null || resource.data.userId == request.auth.uid
+      ) && (
+        request.resource == null || request.resource.data.userId == request.auth.uid
+      );
+    }
+
+    match /performance_reviews/{reviewId} {
+      allow read, write: if isAuthenticated() && (
+        resource == null || resource.data.userId == request.auth.uid
+      ) && (
+        request.resource == null || request.resource.data.userId == request.auth.uid
+      );
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "LUMA",
+  "description": "Capture today. Understand tomorrow. Grow every day. Your private AI journaling companion that listens, understands, and helps you grow.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
